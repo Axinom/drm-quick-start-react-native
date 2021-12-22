@@ -17,7 +17,7 @@ You can install react-native-video npm package using `npm i react-native-video`.
 To intgrate DRM, you need to specify the DRM details in the video element in the App.js file.
 
 ### Widevine & Playready
-
+```
 drm= {{
     type: '<DRM_Type>',
     licenseServer:'<License_server_url>',
@@ -27,9 +27,9 @@ drm= {{
         'Content-Type': 'application/octet-stream'
     }
 }}
-
+```
 ### Fairplay
-
+```
 drm= {{
     type: 'fairplay',
     licenseServer:'https://drm-fairplay-licensing.axtest.net/AcquireLicense',
@@ -41,7 +41,7 @@ drm= {{
         'Content-Type': 'application/octet-stream'
     }
 }}
-
+```
 ##  Using Simulator
 
 Important: Protected streams cannot be played back on Simulator.
