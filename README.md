@@ -12,11 +12,18 @@ In order to use this sample the following prerequisities should be met:
 
 ## Setup
 
+### Using the code samples in the repo
+
+This repo consists of a working react native video player. You can clone the sample code and build the code using Xcode or Android Studio.
+Then you can transfer the build file to your device and try out the playback.
+
+### From the scratch
+
 You can install react-native-video npm package using `npm i react-native-video`. For further information please refer to  https://www.npmjs.com/package/react-native-video.
 
 To intgrate DRM, you need to specify the DRM details in the video element in the App.js file.
 
-### Widevine & Playready
+#### Widevine & Playready
 ```
 drm= {{
     type: '<DRM_Type>',
@@ -28,7 +35,7 @@ drm= {{
     }
 }}
 ```
-### Fairplay
+#### Fairplay
 ```
 drm= {{
     type: 'fairplay',
