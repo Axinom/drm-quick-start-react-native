@@ -30,7 +30,6 @@ drm= {{
     licenseServer:'<License_server_url>',
     headers: {
         'X-AxDRM-Message':'<token>',
-        'Transfer-Encoding': 'Chunked',
         'Content-Type': 'application/octet-stream'
     }
 }}
@@ -39,11 +38,10 @@ drm= {{
 ```
 drm= {{
     type: 'fairplay',
-    licenseServer:'https://drm-fairplay-licensing.axtest.net/AcquireLicense',
+    licenseServer:'https://drm-fairplay-licensing.axprod.net/AcquireLicense',
     certificateUrl: 'https://vtb.axinom.com/FPScert/fairplay.cer',
     headers: {
         'X-AxDRM-Message':'<token>',
-        'Transfer-Encoding': 'Chunked',
         'Content-Type': 'application/octet-stream'
     }
 }}
@@ -99,11 +97,10 @@ if (contentIdOverride != nil) {
 }
 ```
 
-If we take "skd://9f39d572-1a68-4c8a-ae1b-7123b285ba2f:90E95794A62BD1FA12BE63B6D9B8AD43" as an
+If we take "skd://9f39d572-1a68-4c8a-ae1b-7123b285ba2f:90E95794A62BD1FA12BE63B6D9B8AD43" as a
 "url" example then "url.host" would give us "9f39d572-1a68-4c8a-ae1b-7123b285ba2f" but we would
 need "9f39d572-1a68-4c8a-ae1b-7123b285ba2f:90E95794A62BD1FA12BE63B6D9B8AD43" which is given to us
 by the second option by removing just the "skd://" beginning and keeping everything else.
-
 
 ##  Using Simulator
 
