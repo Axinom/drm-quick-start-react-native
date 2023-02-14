@@ -30,7 +30,6 @@ drm= {{
     licenseServer:'<License_server_url>',
     headers: {
         'X-AxDRM-Message':'<token>',
-        'Transfer-Encoding': 'Chunked',
         'Content-Type': 'application/octet-stream'
     }
 }}
@@ -39,16 +38,70 @@ drm= {{
 ```
 drm= {{
     type: 'fairplay',
-    licenseServer:'https://drm-fairplay-licensing.axtest.net/AcquireLicense',
+    licenseServer:'https://drm-fairplay-licensing.axprod.net/AcquireLicense',
     certificateUrl: 'https://vtb.axinom.com/FPScert/fairplay.cer',
-    contentId:'f8c80c25-690f-4736-8132-430e5c6994ce:51BB4F1A7E2E835B2993884BD09ADB19',
     headers: {
         'X-AxDRM-Message':'<token>',
-        'Transfer-Encoding': 'Chunked',
         'Content-Type': 'application/octet-stream'
     }
 }}
 ```
+
+Note:
+RCTVideo.m class had to be slightly modified for Axinom DRM to work. It is part of the
+react-native-video module responsible for video playback on iOS. The change in it was necessary
+because originally the received spcData was handled differently according to whether "getLicense"
+drm property was used or not. The change was made to leave the received spcData unmodified even
+when "getLicense" property was not used (example showing the required change along with commented
+out old implementation):
+```
+  if(self.onGetLicense) {
+    [request setHTTPBody: spcData];
+  } else {
+    // Original implementation
+    /* NSString *spcEncoded = [spcData base64EncodedStringWithOptions:0];
+    NSString *spcUrlEncoded = (NSString *) CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)spcEncoded, NULL, CFSTR("?=&+"), kCFStringEncodingUTF8));
+    NSString *post = [NSString stringWithFormat:@"spc=%@&%@", spcUrlEncoded, contentId];
+    NSData *postData = [post dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+    [request setHTTPBody: postData]; */
+    // Required change for Axinom DRM
+    [request setHTTPBody: spcData];
+  }
+```
+
+The obtained license had to be also left unmodified:
+```
+if(self.onGetLicense) {
+  [dataRequest respondWithData:data];
+} else {
+  // Original implementation
+  /* NSData *decodedData = [[NSData alloc] initWithBase64EncodedData:data options:0];
+  [dataRequest respondWithData:decodedData]; */
+  // Required change for Axinom DRM
+  [dataRequest respondWithData:data];
+}
+```
+
+The reason why just using the "getLicense" drm property would not work is that it would add more
+complexity to the drm parameters in App.js file and a change in the RCTVideo.m class would still
+be required because otherwise contentId would not be correct:
+```
+NSString *contentId;
+NSString *contentIdOverride = (NSString *)[self->_drm objectForKey:@"contentId"];
+if (contentIdOverride != nil) {
+  contentId = contentIdOverride;
+} else if (self.onGetLicense) {
+  contentId = url.host;
+} else {
+  contentId = [url.absoluteString stringByReplacingOccurrencesOfString:@"skd://" withString:@""];
+}
+```
+
+If we take "skd://9f39d572-1a68-4c8a-ae1b-7123b285ba2f:90E95794A62BD1FA12BE63B6D9B8AD43" as a
+"url" example then "url.host" would give us "9f39d572-1a68-4c8a-ae1b-7123b285ba2f" but we would
+need "9f39d572-1a68-4c8a-ae1b-7123b285ba2f:90E95794A62BD1FA12BE63B6D9B8AD43" which is given to us
+by the second option by removing just the "skd://" beginning and keeping everything else.
+
 ##  Using Simulator
 
 Important: Protected streams cannot be played back on Simulator.
